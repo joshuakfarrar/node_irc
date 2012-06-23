@@ -99,6 +99,7 @@ zIRCClient.prototype.on_data = function (data) {
 }
 
 zIRCClient.prototype.parse_message = function (msg) {
+  // JavaScript, why don't you do regex grouping good?!
   prefix = msg.substring(1, msg.indexOf(" ") - 1);
   message = msg.substring(msg.indexOf(" :") + 2);
   command = msg.substring(msg.indexOf(" ") + 1, msg.indexOf(" :"));
