@@ -2,8 +2,7 @@
   "author": "",
   "name": "node_irc",
   "description": "An IRC driver for Node.js",
-  "version": "0.0.0",
-  "bin": "./bin/redis_failover.js",
+  "version": "0.1.0",
   "repository": {
     "url": ""
   },
