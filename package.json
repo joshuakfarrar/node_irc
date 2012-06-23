@@ -1,7 +1,7 @@
 {
   "author": "",
-  "name": "redis_failover",
-  "description": "An automatic failover.. thing.. for Redis. Uses Zookeeper and is based on the work of ryanlecompte on Github.",
+  "name": "node_irc",
+  "description": "An IRC driver for Node.js",
   "version": "0.0.0",
   "bin": "./bin/redis_failover.js",
   "repository": {
