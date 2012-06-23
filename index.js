@@ -21,7 +21,7 @@ function zIRCClient(stream, options) {
 
   var self = this;
 
-  this.on("send", function (message) {
+  this.on("say", function (message) {
     //this.send_command("PRIVMSG %s :%s", [ this.options.chan, message]);
     this.send_command("PRIVMSG " + this.options.chan + " :" + message);
   });
