@@ -43,19 +43,30 @@ zIRCClient.prototype.on_connect = function () {
   this.ready = false;
   this.connections += 1;
 
-  if (this.options.nick) {
-    this.do_identify();
-  }
-  else {
-    this.emit("connect");
-    this.on_ready();
-  }
+  // Need to write stuff to do if no options have been passed to the driver
+  //if (this.options.nick) {
+  this.do_identify();
+  //}
+  //else {
+  //  this.emit("connect");
+  //  this.on_ready();
+  //}
 };
 
 zIRCClient.prototype.do_identify = function () {
   var self = this;
 
   self.send_anyway = true;
+  if (self.options.pass) {
+    //self.send_command("PASS %s", [ self.options.pass ]);
+    self.send_command("PASS " + self.options.pass);
+  }
+
+  // I like the idea of vsprintf(command, args) better than sending concatenated strings..
+  // Just need to write a good vsprintf function
+  //self.send_command("NICK %s", [ self.options.nick ]);
+  //self.send_command("USER %s 0 * :zIRCClient v0.1.0 by Zipp", [ self.options.nick ]);
+  //self.send_command("JOIN %s", [ self.options.chan ]);
   self.send_command("NICK " + self.options.nick);
   self.send_command("USER " + self.options.nick + ' 0 * :zIRCClient v0.1.0 by Zipp');
   self.send_command("JOIN " + self.options.chan);
