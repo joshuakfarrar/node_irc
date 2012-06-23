@@ -13,7 +13,7 @@ zirc_client.on("ready", function() {
   process.stdin.setEncoding("utf8");
 
   process.stdin.on("data", function(text) {
-    zirc_client.emit("send", text);
+    zirc_client.emit("say", text);
   });
 });
 
