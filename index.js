@@ -22,6 +22,7 @@ function zIRCClient(stream, options) {
   var self = this;
 
   this.on("send", function (message) {
+    //this.send_command("PRIVMSG %s :%s", [ this.options.chan, message]);
     this.send_command("PRIVMSG " + this.options.chan + " :" + message);
   });
 
@@ -116,6 +117,7 @@ zIRCClient.prototype.send_command = function (command) {
   }
 
   console.log(command);
+  // this.commands_sent += !stream.write(vsprintf(command, args) + "\r\n");
   this.commands_sent += !stream.write(command + "\r\n");
   return true;
 };
