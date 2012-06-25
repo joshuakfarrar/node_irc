@@ -59,18 +59,12 @@ zIRCClient.prototype.do_identify = function () {
 
   self.send_anyway = true;
   if (self.options.pass) {
-    //self.send_command("PASS %s", [ self.options.pass ]);
-    self.send_command("PASS " + self.options.pass);
+    self.send_command("PASS %s", [ self.options.pass ]);
   }
 
-  // I like the idea of vsprintf(command, args) better than sending concatenated strings..
-  // Just need to write a good vsprintf function
   self.send_command("NICK %s", [ self.options.nick ]);
   self.send_command("USER %s 0 * :zIRCClient v0.1.0 by Zipp", [ self.options.nick ]);
   self.send_command("JOIN %s", [ self.options.chan ]);
-  //self.send_command("NICK " + self.options.nick);
-  //self.send_command("USER " + self.options.nick + ' 0 * :zIRCClient v0.1.0 by Zipp');
-  //self.send_command("JOIN " + self.options.chan);
   self.emit("connect");
   self.on_ready();
   self.send_anyway = false;
@@ -124,30 +118,9 @@ zIRCClient.prototype.send_command = function (command, args) {
     return string;
   }
 
-  //this.commands_sent += !stream.write(test(command, args) + "\r\n");
   this.commands_sent += !stream.write(vsprintf(command, args) + "\r\n");
-  //this.commands_sent += !stream.write(command + "\r\n");
   return true;
 };
-
-/*
-zIRCClient.prototype.send_command = function (command) {
-  var stream = this.stream;
-
-  if (typeof command !== "string") {
-    throw new Error("First argument to send_command must be the command name string, not " + typeof command);
-  }
-  
-  if ((!this.ready && !this.send_anyway) || !stream.writable) {
-    return false;
-  }
-
-  console.log(command);
-  // this.commands_sent += !stream.write(vsprintf(command, args) + "\r\n");
-  this.commands_sent += !stream.write(command + "\r\n");
-  return true;
-};
-*/
 
 exports.createClient = function(port_arg, host_arg, options) {
   var port = port_arg || default_port,
