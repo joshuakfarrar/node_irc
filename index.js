@@ -144,26 +144,6 @@ exports.createClient = function(port_arg, host_arg, options) {
   return zirc_client;
 };
 
-/*
-zIRCClient.prototype.send = function(message) {
-  message = message.trim();
-  if (message.match(/^\//)) {
-    switch (message.substring(1, message.indexOf(" "))) {
-      case "quit":
-        quitMessage = message.substring(message.indexOf(" ") + 1);
-        console.log(quitMessage);
-        this.send_command("QUIT :" + quitMessage);
-      break;
-      default:
-        console.log("That command doesn't exist", message.substring(1));
-      break;
-    }
-    return true;
-  }
-  this.send_command("PRIVMSG " + this.options.chan + " :" + message);
-};
-*/
-
 function Message(prefix, command, message) {
   this.prefix = prefix;
   this.command = command;
