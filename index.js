@@ -22,8 +22,8 @@ function zIRCClient(stream, options) {
   var self = this;
 
   this.on("send", function (message) {
-    //this.send_command("PRIVMSG %s :%s", [ this.options.chan, message]);
-    this.send_command("PRIVMSG " + this.options.chan + " :" + message);
+    this.send_command("PRIVMSG %s :%s", [ this.options.chan, message]);
+    //this.send_command("PRIVMSG " + this.options.chan + " :" + message);
   });
 
   this.stream.on("connect", function() {
@@ -65,12 +65,12 @@ zIRCClient.prototype.do_identify = function () {
 
   // I like the idea of vsprintf(command, args) better than sending concatenated strings..
   // Just need to write a good vsprintf function
-  //self.send_command("NICK %s", [ self.options.nick ]);
-  //self.send_command("USER %s 0 * :zIRCClient v0.1.0 by Zipp", [ self.options.nick ]);
-  //self.send_command("JOIN %s", [ self.options.chan ]);
-  self.send_command("NICK " + self.options.nick);
-  self.send_command("USER " + self.options.nick + ' 0 * :zIRCClient v0.1.0 by Zipp');
-  self.send_command("JOIN " + self.options.chan);
+  self.send_command("NICK %s", [ self.options.nick ]);
+  self.send_command("USER %s 0 * :zIRCClient v0.1.0 by Zipp", [ self.options.nick ]);
+  self.send_command("JOIN %s", [ self.options.chan ]);
+  //self.send_command("NICK " + self.options.nick);
+  //self.send_command("USER " + self.options.nick + ' 0 * :zIRCClient v0.1.0 by Zipp');
+  //self.send_command("JOIN " + self.options.chan);
   self.emit("connect");
   self.on_ready();
   self.send_anyway = false;
@@ -105,6 +105,31 @@ zIRCClient.prototype.parse_message = function (msg) {
   return new Message(prefix, command, message);
 };
 
+zIRCClient.prototype.send_command = function (command, args) {
+  var stream = this.stream;
+
+  if (typeof command !== "string") {
+    throw new Error("First argument to send_command must be the command name string, not " + typeof command);
+  }
+
+  if ((!this.ready && !this.send_anyway) || !stream.writable) {
+    return false;
+  }
+
+  var vsprintf = function (string, args) {
+    args.forEach(function(arg) {
+      string = util.format(string, arg);
+    });
+    return string;
+  }
+
+  //this.commands_sent += !stream.write(test(command, args) + "\r\n");
+  this.commands_sent += !stream.write(vsprintf(command, args) + "\r\n");
+  //this.commands_sent += !stream.write(command + "\r\n");
+  return true;
+};
+
+/*
 zIRCClient.prototype.send_command = function (command) {
   var stream = this.stream;
 
@@ -121,6 +146,7 @@ zIRCClient.prototype.send_command = function (command) {
   this.commands_sent += !stream.write(command + "\r\n");
   return true;
 };
+*/
 
 exports.createClient = function(port_arg, host_arg, options) {
   var port = port_arg || default_port,
