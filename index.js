@@ -115,15 +115,17 @@ zIRCClient.prototype.send_command = function (command, args) {
     return false;
   }
 
-  var vsprintf = function (string, args, newline) {
-    args.forEach(function(arg) {
-      string = util.format(string, arg);
-    });
+  var vsprintf = function (string, args) {
+    if (Array.isArray(args)) {
+      args.forEach(function(arg) {
+        string = util.format(string, arg);
+      });
+    }
     return string;
   }
 
-  console.log(vsprintf(command, args));
-  this.commands_sent += !stream.write(vsprintf(command, args);
+  util.log(vsprintf(command, args));
+  this.commands_sent += !stream.write(vsprintf(command, args));
   return true;
 };
 
