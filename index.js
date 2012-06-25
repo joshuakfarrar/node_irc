@@ -23,7 +23,11 @@ function zIRCClient(stream, options) {
 
   this.on("say", function (message) {
     this.send_command("PRIVMSG %s :%s", [ this.options.chan, message]);
-    //this.send_command("PRIVMSG " + this.options.chan + " :" + message);
+  });
+
+  this.on("quit", function (message) {
+    this.send_command("QUIT :%s", [ message ]);
+    process.exit();
   });
 
   this.stream.on("connect", function() {
@@ -111,14 +115,18 @@ zIRCClient.prototype.send_command = function (command, args) {
     return false;
   }
 
-  var vsprintf = function (string, args) {
+  var vsprintf = function (string, args, newline) {
     args.forEach(function(arg) {
       string = util.format(string, arg);
     });
+    if (newline) {
+      string += "\r\n";
+    }
     return string;
   }
 
-  this.commands_sent += !stream.write(vsprintf(command, args) + "\r\n");
+  console.log(vsprintf(command, args));
+  this.commands_sent += !stream.write(vsprintf(command, args, true));
   return true;
 };
 
