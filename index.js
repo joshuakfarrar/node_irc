@@ -1,4 +1,4 @@
-r net = require("net"),
+var net = require("net"),
     events = require("events"),
     util = require("util"),
     Queue = require("./lib/queue"),
