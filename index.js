@@ -1,4 +1,4 @@
-var net = require("net"),
+r net = require("net"),
     events = require("events"),
     util = require("util"),
     Queue = require("./lib/queue"),
@@ -22,11 +22,11 @@ function zIRCClient(stream, options) {
   var self = this;
 
   this.on("say", function (message) {
-    this.send_command("PRIVMSG %s :%s", [ this.options.chan, message]);
+    this.send_command("PRIVMSG %s :%s\r\n", [ this.options.chan, message]);
   });
 
   this.on("quit", function (message) {
-    this.send_command("QUIT :%s", [ message ]);
+    this.send_command("QUIT :%s\r\n", [ message ]);
     process.exit();
   });
 
@@ -63,12 +63,12 @@ zIRCClient.prototype.do_identify = function () {
 
   self.send_anyway = true;
   if (self.options.pass) {
-    self.send_command("PASS %s", [ self.options.pass ]);
+    self.send_command("PASS %s\r\n", [ self.options.pass ]);
   }
 
-  self.send_command("NICK %s", [ self.options.nick ]);
-  self.send_command("USER %s 0 * :zIRCClient v0.2.0 by Zipp", [ self.options.nick ]);
-  self.send_command("JOIN %s", [ self.options.chan ]);
+  self.send_command("NICK %s\r\n", [ self.options.nick ]);
+  self.send_command("USER %s 0 * :zIRCClient v0.2.0 by Zipp\r\n", [ self.options.nick ]);
+  self.send_command("JOIN %s\r\n", [ self.options.chan ]);
   self.emit("connect");
   self.on_ready();
   self.send_anyway = false;
@@ -89,7 +89,7 @@ zIRCClient.prototype.on_data = function (data) {
       return true;
     }
     if (message.match(/^PING/g)) {
-      self.send_command("PONG");
+      self.send_command("PONG\r\n");
       return true;
     }
     self.emit("message", self.parse_message(message));
@@ -119,14 +119,11 @@ zIRCClient.prototype.send_command = function (command, args) {
     args.forEach(function(arg) {
       string = util.format(string, arg);
     });
-    if (newline) {
-      string += "\r\n";
-    }
     return string;
   }
 
   console.log(vsprintf(command, args));
-  this.commands_sent += !stream.write(vsprintf(command, args, true));
+  this.commands_sent += !stream.write(vsprintf(command, args);
   return true;
 };
 
