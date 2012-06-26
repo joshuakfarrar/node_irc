@@ -103,6 +103,7 @@ zIRCClient.prototype.handle_command = function (message) {
   if (!message) {
     return false;
   }
+
   /*
     Server->Driver command handling
     What to do when you get a command of case 'x' from the server
@@ -115,6 +116,7 @@ zIRCClient.prototype.handle_command = function (message) {
       self.emit("message", message);
     break;
   }
+
   return true;
 }
 
