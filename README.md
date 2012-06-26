@@ -16,8 +16,14 @@ Derp
 
 ### "error"
 
+## Server Events
+
+### "PING"
+
 ## Client Events
 
 ### "say"
 
 ### "quit"
+
+### "PONG"

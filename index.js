@@ -63,7 +63,7 @@ zIRCClient.prototype.do_identify = function () {
   }
 
   self.send_command("NICK %s\r\n", [ self.options.nick ]);
-  self.send_command("USER %s 0 * :zIRCClient v0.2.0 by Zipp\r\n", [ self.options.nick ]);
+  self.send_command("USER %s 0 * :zIRCClient v0.3.0 by Zipp\r\n", [ self.options.nick ]);
   self.send_command("JOIN %s\r\n", [ self.options.chan ]);
   self.emit("connect");
   self.on_ready();
@@ -129,9 +129,7 @@ zIRCClient.prototype.parse_message = function (msg) {
     args = msg.substring(msg.indexOf(" ") + 1).split(" ");
   }
   command = args.shift();
-
-  // This is why I hate mIRC
-  command.toUpperCase();
+  command = command.toUpperCase();
 
   return new Message(prefix, command, args);
 };
