@@ -36,7 +36,7 @@ zirc_client.on("ready", function() {
       }
       return true;
     }
-    zirc_client.emit("say", text);
+    zirc_client.emit("PRIVMSG", text);
   });
 });
 

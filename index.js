@@ -19,19 +19,26 @@ function zIRCClient(stream, options) {
 
   var self = this;
 
+  /*
+    Client-generated event handling
+    The driver needs to accept these messages from the client
+  */
   this.on("PONG", function (hostname) {
-    this.send_command("PONG :%s\r\n", [ hostname ]);
+    this.send_command("PONG %s", [ hostname ]);
   });
 
-  this.on("say", function (message) {
-    this.send_command("PRIVMSG %s :%s\r\n", [ this.options.chan, message]);
+  this.on("PRIVMSG", function (message) {
+    this.send_command("PRIVMSG %s :%s", [ this.options.chan, message]);
   });
 
   this.on("quit", function (message) {
-    this.send_command("QUIT :%s\r\n", [ message ]);
+    this.send_command("QUIT :%s", [ message ]);
     process.exit();
   });
 
+  /*
+    Connection events
+  */
   this.stream.on("connect", function() {
     self.on_connect();
   });
@@ -59,12 +66,12 @@ zIRCClient.prototype.do_identify = function () {
 
   self.send_anyway = true;
   if (self.options.pass) {
-    self.send_command("PASS %s\r\n", [ self.options.pass ]);
+    self.send_command("PASS %s", [ self.options.pass ]);
   }
 
-  self.send_command("NICK %s\r\n", [ self.options.nick ]);
-  self.send_command("USER %s 0 * :zIRCClient v0.3.0 by Zipp\r\n", [ self.options.nick ]);
-  self.send_command("JOIN %s\r\n", [ self.options.chan ]);
+  self.send_command("NICK %s", [ self.options.nick ]);
+  self.send_command("USER %s 0 * :zIRCClient v0.3.0 by Zipp", [ self.options.nick ]);
+  self.send_command("JOIN %s", [ self.options.chan ]);
   self.emit("connect");
   self.on_ready();
   self.send_anyway = false;
@@ -87,16 +94,19 @@ zIRCClient.prototype.on_data = function (data) {
     if (line.charAt(line.length - 1) == '\r') {
       line = line.slice(0, -1);
     }
-    message = self.parse_message(line);
-    if (!message) {
-      return false;
-    }
-    self.handle_command(message);
+    self.handle_command(self.parse_message(line));
   });
 }
 
 zIRCClient.prototype.handle_command = function (message) {
   var self = this;
+  if (!message) {
+    return false;
+  }
+  /*
+    Server->Driver command handling
+    What to do when you get a command of case 'x' from the server
+  */
   switch (message.command) {
     case "PING":
       self.emit("PING");
@@ -105,7 +115,7 @@ zIRCClient.prototype.handle_command = function (message) {
       self.emit("message", message);
     break;
   }
-  return false;
+  return true;
 }
 
 zIRCClient.prototype.parse_message = function (msg) {
@@ -155,7 +165,7 @@ zIRCClient.prototype.send_command = function (command, args) {
   }
 
   util.log(vsprintf(command, args));
-  this.commands_sent += !stream.write(vsprintf(command, args));
+  this.commands_sent += !stream.write(vsprintf(command, args) + "\r\n");
   return true;
 };
 
