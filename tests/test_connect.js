@@ -1,3 +1,5 @@
+var os = require("os");
+
 var zirc_client = require("../index").createClient(null, null, {
   nick: "zippslave",
   chan: "#lolzipp"
@@ -38,10 +40,14 @@ zirc_client.on("ready", function() {
   });
 });
 
+zirc_client.on("PING", function() {
+  zirc_client.emit("PONG", os.hostname());
+});
+
 zirc_client.on("error", function(err) {
   console.log(err);
 });
 
 zirc_client.on("message", function(msg) {
-  console.log(msg.prefix + " " + msg.command + " " + msg.message);
+  console.log(msg);
 });

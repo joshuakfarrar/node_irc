@@ -15,11 +15,13 @@ function zIRCClient(stream, options) {
   this.connections = 0;
 
   this.send_anyway = false;
-  this.command_queue = new Queue();
-  this.offline_queue = new Queue();
   this.commands_sent = 0;
 
   var self = this;
+
+  this.on("PONG", function (hostname) {
+    this.send_command("PONG :%s\r\n", [ hostname ]);
+  });
 
   this.on("say", function (message) {
     this.send_command("PRIVMSG %s :%s\r\n", [ this.options.chan, message]);
@@ -49,13 +51,7 @@ zIRCClient.prototype.on_connect = function () {
   this.connections += 1;
 
   // Need to write stuff to do if no options have been passed to the driver
-  //if (this.options.nick) {
   this.do_identify();
-  //}
-  //else {
-  //  this.emit("connect");
-  //  this.on_ready();
-  //}
 };
 
 zIRCClient.prototype.do_identify = function () {
@@ -80,28 +76,64 @@ zIRCClient.prototype.on_ready = function () {
 };
 
 zIRCClient.prototype.on_data = function (data) {
-  
-  var dataString = data.toString(), 
-      self = this;
+  var self = this,
+      lines = [],
+      delimiter = '\n',
+      message;
 
-  dataString.split("\r\n").forEach(function (message) {
+  lines = data.toString().split(delimiter);
+
+  lines.forEach(function (line) {
+    if (line.charAt(line.length - 1) == '\r') {
+      line = line.slice(0, -1);
+    }
+    message = self.parse_message(line);
     if (!message) {
-      return true;
+      return false;
     }
-    if (message.match(/^PING/g)) {
-      self.send_command("PONG\r\n");
-      return true;
-    }
-    self.emit("message", self.parse_message(message));
+    self.handle_command(message);
   });
 }
 
+zIRCClient.prototype.handle_command = function (message) {
+  var self = this;
+  switch (message.command) {
+    case "PING":
+      self.emit("PING");
+    break;
+    default:
+      self.emit("message", message);
+    break;
+  }
+  return false;
+}
+
 zIRCClient.prototype.parse_message = function (msg) {
-  // JavaScript, why don't you do regex grouping good?!
-  prefix = msg.substring(1, msg.indexOf(" ") - 1);
-  message = msg.substring(msg.indexOf(" :") + 2);
-  command = msg.substring(msg.indexOf(" ") + 1, msg.indexOf(" :"));
-  return new Message(prefix, command, message);
+  var args = [];
+  if (!msg) {
+    return false;
+  }
+  if (msg.match(/^:/g)) {
+    var prefix = msg.substring(1).split(' ', 1);
+  }
+  if (msg.indexOf(" :") != -1) {
+    if (msg.match(/^:/g)) {
+      args = msg.substring(msg.indexOf(" ") + 1, msg.indexOf(" :")).split(" ");
+    }
+    else {
+      args = msg.substring(0, msg.indexOf(" :")).split(" ");
+    }
+   args.push(msg.substring(msg.indexOf(" :") + 2));
+  }
+  else {
+    args = msg.substring(msg.indexOf(" ") + 1).split(" ");
+  }
+  command = args.shift();
+
+  // This is why I hate mIRC
+  command.toUpperCase();
+
+  return new Message(prefix, command, args);
 };
 
 zIRCClient.prototype.send_command = function (command, args) {
@@ -143,8 +175,8 @@ exports.createClient = function(port_arg, host_arg, options) {
   return zirc_client;
 };
 
-function Message(prefix, command, message) {
+function Message(prefix, command, args) {
   this.prefix = prefix;
   this.command = command;
-  this.message = message;
+  this.args = args;
 }
