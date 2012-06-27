@@ -1,7 +1,6 @@
 var net = require("net"),
     events = require("events"),
     util = require("util"),
-    Queue = require("./lib/queue"),
     to_array = require("./lib/to_array"),
     CHANNEL_PREFIXES = [ '#', '&', '!', '+' ],
     default_port = "6667",
