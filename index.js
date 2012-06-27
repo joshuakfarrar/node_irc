@@ -205,7 +205,7 @@ zIRCClient.prototype.do_identify = function () {
   }
 
   self.send_command("NICK %s", [ self.options.nick ]);
-  self.send_command("USER %s 0 * :zIRCClient v0.3.0 by Zipp", [ self.options.nick ]);
+  self.send_command("USER %s 0 * :zIRCClient v0.4.0 by Zipp", [ self.options.nick ]);
   self.send_command("JOIN %s", [ self.options.chan ]);
   self.emit("connect");
   self.on_ready();

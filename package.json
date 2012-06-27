@@ -2,7 +2,7 @@
   "author": "",
   "name": "node_irc",
   "description": "An IRC driver for Node.js",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "repository": {
     "url": ""
   },
