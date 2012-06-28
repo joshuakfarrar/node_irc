@@ -42,134 +42,6 @@ function zIRCClient(stream, options) {
     this.send_command("PONG %s", [ hostname ]);
   });
 
-  this.on("mode", function (channel, set,  modes, limit, user, mask) {
-    var command = '';
-    if (set) {
-      command = "MODE " + channel + " +" + modes;
-    }
-    else {
-      command = "MODE " + channel + " -" + modes;
-    }
-    if (typeof limit == 'number') {
-      command = command + " " + limit;
-    }
-    else if (typeof user === 'string') {
-      command = command + " " + user;
-    }
-    else if (typeof mask === 'string') {
-      command = command + " " + mask;
-    }
-    self.send_command(command);
-  });
-
-  this.on("register", function (nickname, hostname, servername) {
-    if (typeof self.options.password === 'string') {
-      self.send_command("PASS %s", [ self.options.password ]);
-    }
-    self.emit("setNick", nickname);
-    if (typeof self.options.username !== 'string') {
-      self.options.username = nickname;
-    }
-    self.send_command("USER %s %s %s :%s", [ self.options.username, hostname, servername, self.options.realname ]);
-  });
-
-  this.on("setNick", function (nickname) {
-    self._triedNickname = nickname;
-    self.send_command("NICK %s", [ nickname ]);
-  });
-
-  this.on("join", function (channel, key) {
-    if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
-      channel = "#" + channel;
-    }
-    if (typeof key !== 'string') {
-      self.send_command("JOIN %s", [ channel ]);
-    }
-    else {
-      self.send_command("JOIN %s %s", [ channel, key ]);
-    } 
-  });
-
-  this.on("leave", function (channel, reason) {
-    if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
-      channel = "#" + channel;
-    }
-    if (typeof reason !== 'string') {
-      self.send_command("PART %s", [ channel ]);
-    }
-    else {
-      self.send_command("PART %s :%s", [ channel, reason ]);
-    }
-  });
-
-  this.on("kick", function (channel, user, reason) {
-    if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
-      channel = "#" + channel;
-    }
-    if (typeof reason !== 'string') {
-      self.send_command("KICK %s %s", [ channel, user ]);
-    }
-    else {
-      self.send_command("KICK %s %s :%s", [ channel, user, reason ]);
-    }
-  });
-
-  this.on("invite", function (user, channel) {
-    if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
-      channel = "#" + channel;
-    }
-    self.send_command("INVITE %s %s", [ user, channel ]);
-  });
-
-  this.on("topic", function (channel, topic) {
-    if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
-      channel = "#" + channel;
-    }
-    if (typeof topic !== 'string') {
-      this.send_command("TOPIC %s", [ channel ]);
-    }
-    else {
-      this.send_command("TOPIC %s :%s", [ channel, topic ]);
-    }
-  });
-
-  this.on("msg", function (user, message) {
-    this.send_command("PRIVMSG %s :%s", [ user, message ]);
-  });
-
-  this.on("notice", function (user, message) {
-    this.send_command("NOTICE %s :%s", [ user, message ]);
-  });
-
-  this.on("away", function (message) {
-    message = (typeof message === 'string') ? message : '';
-    this.send_command("AWAY :%s", [ message ]);
-  });
-
-  this.on("back", function () {
-    this.emit("away");
-  });
-
-  this.on("whois", function(nickname, server) {
-    if (!server) {
-      this.send_command("WHOIS %s", [ nickname ]);
-    }
-    else {
-      this.send_command("WHOIS %s %s", [ nickname, server ]);
-    }
-  });
-
-  this.on("say", function (channel, message) {
-    if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
-      channel = "#" + channel;
-    }
-    this.send_command("PRIVMSG %s :%s", [ channel, message ]);
-  });
-
-  this.on("quit", function (message) {
-    this.send_command("QUIT :%s", [ message ]);
-  });
-
   /*
     Connection events
   */
@@ -256,6 +128,136 @@ zIRCClient.prototype.handle_command = function (message) {
 
   return true;
 }
+
+zIRCClient.prototype.join = function (channel, key) {
+  if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
+    channel = "#" + channel;
+  }
+  if (typeof key !== 'string') {
+    this.send_command("JOIN %s", [ channel ]);
+  }
+  else {
+    this.send_command("JOIN %s %s", [ channel, key ]);
+  }
+};
+
+zIRCClient.prototype.leave = function (channel, reason) {
+  if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
+    channel = "#" + channel;
+  }
+  if (typeof reason !== 'string') {
+    this.send_command("PART %s", [ channel ]);
+  }
+  else {
+    this.send_command("PART %s :%s", [ channel, reason ]);
+  }
+};
+
+zIRCClient.prototype.kick = function (channel, user, reason) {
+  if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
+    channel = "#" + channel;
+  }
+  if (typeof reason !== 'string') {
+    this.send_command("KICK %s %s", [ channel, user ]);
+  }
+  else {
+    this.send_command("KICK %s %s :%s", [ channel, user, reason ]);
+  }
+};
+
+zIRCClient.prototype.invite = function (user, channel) {
+  if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
+    channel = "#" + channel;
+  }
+  this.send_command("INVITE %s %s", [ user, channel ]);
+};
+
+zIRCClient.prototype.topic = function (channel, topic) {
+  if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
+    channel = "#" + channel;
+  }
+  if (typeof topic !== 'string') {
+    this.send_command("TOPIC %s", [ channel ]);
+  }
+  else {
+    this.send_command("TOPIC %s :%s", [ channel, topic ]);
+  }
+};
+
+zIRCClient.prototype.msg = function (user, message) {
+  this.send_command("PRIVMSG %s :%s", [ user, message ]);
+};
+
+zIRCClient.prototype.notice = function (user, message) {
+  this.send_command("NOTICE %s :%s", [ user, message ]);
+};
+
+zIRCClient.prototype.say = function (channel, message) {
+  if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
+    channel = "#" + channel;
+  }
+  this.send_command("PRIVMSG %s :%s", [ channel, message ]);
+};
+
+zIRCClient.prototype.mode = function (channel, set, modes, limit, user, mask) {
+  var command = '';
+  if (set) {
+    command = "MODE " + channel + " +" + modes;
+  }
+  else {
+    command = "MODE " + channel + " -" + modes;
+  }
+  if (typeof limit == 'number') {
+    command = command + " " + limit;
+  }
+  else if (typeof user === 'string') {
+    command = command + " " + user;
+  }
+  else if (typeof mask === 'string') {
+    command = command + " " + mask;
+  }
+  this.send_command(command);
+};
+
+zIRCClient.prototype.register = function (nickname, hostname, servername) {
+  if (typeof this.options.password === 'string') {
+    this.send_command("PASS %s", [ this.options.password ]);
+  }
+  this.setNick(nickname);
+  if (typeof this.options.username !== 'string') {
+    this.options.username = nickname;
+  }
+  this.send_command("USER %s %s %s :%s", [ this.options.username, hostname, servername, this.options.realname ]);
+};
+
+zIRCClient.prototype.setNick = function (nickname) {
+  this._triedNickname = nickname;
+  if (typeof nickname === 'string') {
+    this.send_command("NICK %s", [ nickname ]);
+  }
+};
+
+zIRCClient.prototype.away = function (message) {
+  message = (typeof message === 'string') ? message : '';
+  this.send_command("AWAY :%s", [ message ]);
+};
+
+zIRCClient.prototype.back = function () {
+  this.away();
+};
+
+zIRCClient.prototype.whois = function (nickname, server) {
+  if (!server) {
+    this.send_command("WHOIS %s", [ nickname ]);
+  }
+  else {
+    this.send_command("WHOIS %s %s", [ nickname, server ]);
+  }
+};
+
+zIRCClient.prototype.quit = function (message) {
+  this.send_command("QUIT :%s", [ message ]);
+};
 
 zIRCClient.prototype.parse_message = function (msg) {
   var args = [];

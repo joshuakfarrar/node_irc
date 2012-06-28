@@ -46,40 +46,50 @@ zirc_client.on("ready", function() {
       switch (command) {
         case "quit":
           var message = text.substring(text.indexOf(" ") + 1);
-          zirc_client.emit("quit", message);
+          zirc_client.quit(message);
           process.exit(1);
         break;
         case "whois":
           var args = text.substring(text.indexOf(" ") + 1);
           args = args.split(" ");
-          zirc_client.emit("whois", args[0], args[1]);
+          zirc_client.whois(args[0], args[1]);
         break;
         case "away":
           var message = text.substring(text.indexOf(" ") + 1);
-          zirc_client.emit("away", message);
+          zirc_client.away(message);
         break;
         case "msg":
           var args = text.substring(text.indexOf(" ") + 1);
           args = args.split(" ");
-          zirc_client.emit("msg", args.shift(), util.format(args.toString()));
+          zirc_client.msg(args.shift(), util.format(args.toString()));
         break;
         case "notice":
           var args = text.substring(text.indexOf(" ") + 1);
           args = args.split(" ");
-          zirc_client.emit("notice", args.shift(), util.format(args.toString()));
+          zirc_client.notice(args.shift(), util.format(args.toString()));
         break;
         case "back":
-          zirc_client.emit("back");
+          zirc_client.back();
         break;
         case "join":
           var args = text.substring(text.indexOf(" ") + 1);
           args = args.split(" ");
-          zirc_client.emit("join", args[0]);
+          zirc_client.join(args[0]);
         break;
+        case "setNick":
+          var args = text.substring(text.indexOf(" ") + 1);
+          args = args.split(" ");
+          zirc_client.setNick(args[0]);
+        break; 
         case "leave":
           var args = text.substring(text.indexOf(" ") + 1);
           args = args.split(" ");
-          zirc_client.emit("leave", args.shift(), util.format(args.toString()));
+          zirc_client.leave(args.shift(), util.format(args.join(" ")));
+        break;
+        case "topic":
+          var args = text.substring(text.indexOf(" ") + 1);
+          args = args.split(" ");
+          zirc_client.topic(args.shift(), util.format(args.join(" ")));
         break;
         default:
           console.log("That command doesn't exist!");
@@ -87,7 +97,7 @@ zirc_client.on("ready", function() {
       }
       return true;
     }
-    zirc_client.emit("say", "lolzipp", text);
+    zirc_client.say("#lolzipp", text);
   });
 });
 

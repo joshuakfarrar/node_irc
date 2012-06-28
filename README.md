@@ -20,9 +20,9 @@ Derp
 
 ### "PING"
 
-## Client Events
+## Client Commands
 
-The driver listens for the following events, which may be emitted by the client:
+The driver exposes the following commands, which may be called by the client:
 
 ### "PONG" (hostname)
 
@@ -33,7 +33,7 @@ The proper way to respond to a PING event from the server. Hostname is an option
 Sets a user's mode in the channel
 
 ```js
-  client.emit("mode", "#example", true, "v", null, "zipp", null);
+  client.mode("#example", true, "v", null, "zipp", null);
 ```
 
 ### "register" (nickname, hostname, servername)
@@ -57,7 +57,7 @@ Attempts to leave a channel; reason argument is optional.
 Attempts to kick a user from a channel; reason argument is optional.
 
 ```js
-  client.emit("kick", "#example", "zipp", "Stop derailing chat with links to pictures of cats");
+  client.kick("#example", "zipp", "Stop derailing chat with links to pictures of cats");
 ```
 ### "invite" (user, channel)
 
