@@ -22,6 +22,8 @@ Derp
 
 ## Client Events
 
+The driver listens for the following events, which may be emitted by the client:
+
 ### "PONG"
 
 ### "mode" (channel, set, modes, limit, user, mask)
