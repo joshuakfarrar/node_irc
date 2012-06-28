@@ -24,16 +24,22 @@ Derp
 
 The driver exposes the following commands, which may be called by the client:
 
-### "PONG" (hostname)
+### "pong" (hostname)
 
 The proper way to respond to a PING event from the server. Hostname is an optional argument. If you don't respond to a ping event, it's likely that your client will be automatically disconnected from the server.
+
+```js
+client.on("PING", function() {
+  client.pong();  
+});
+```
 
 ### "mode" (channel, set, modes, limit, user, mask)
 
 Sets a user's mode in the channel
 
 ```js
-  client.mode("#example", true, "v", null, "zipp", null);
+client.mode("#example", true, "v", null, "zipp", null);
 ```
 
 ### "register" (nickname, hostname, servername)
@@ -57,7 +63,7 @@ Attempts to leave a channel; reason argument is optional.
 Attempts to kick a user from a channel; reason argument is optional.
 
 ```js
-  client.kick("#example", "zipp", "Stop derailing chat with links to pictures of cats");
+client.kick("#example", "zipp", "Stop derailing chat with links to pictures of cats");
 ```
 ### "invite" (user, channel)
 
