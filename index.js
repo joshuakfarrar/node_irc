@@ -16,8 +16,6 @@ function zIRCClient(stream, options) {
   this.send_anyway = false;
   this.commands_sent = 0;
 
-  var self = this;
-
   /*
     Client-generated event handling
     The driver accepts these events from the client
@@ -37,6 +35,9 @@ function zIRCClient(stream, options) {
     - setNick
     - quit
   */
+
+  var self = this;
+
   this.on("PONG", function (hostname) {
     this.send_command("PONG %s", [ hostname ]);
   });
@@ -141,7 +142,7 @@ function zIRCClient(stream, options) {
   });
 
   this.on("away", function (message) {
-    message = (typeof message == 'undefined') ? '' : message;
+    message = (typeof message === 'string') ? message : '';
     this.send_command("AWAY :%s", [ message ]);
   });
 
