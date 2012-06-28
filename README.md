@@ -22,8 +22,34 @@ Derp
 
 ## Client Events
 
-### "say"
-
-### "quit"
-
 ### "PONG"
+
+### "mode" (channel, set, modes, limit, user, mask)
+
+### "register" (nickname, hostname, servername)
+
+### "setNick" (nickname)
+
+### "join" (channel, key)
+
+### "leave" (channel, reason)
+
+### "kick" (channel, user, reason)
+
+### "invite" (user, channel)
+
+### "topic" (channel, topic)
+
+### "msg" (user, message)
+
+### "notice" (user, message)
+
+### "away" (message)
+
+### "back"
+
+### "whois" (nickname, server)
+
+### "say" (channel, message)
+
+### "quit" (message)
