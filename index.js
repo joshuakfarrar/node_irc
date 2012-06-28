@@ -1,6 +1,7 @@
 var net = require("net"),
     events = require("events"),
     util = require("util"),
+    numerics = require("./lib/numerics"),
     CHANNEL_PREFIXES = [ '#', '&', '!', '+' ],
     default_port = "6667",
     default_host = "irc.freenode.net";
