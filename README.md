@@ -56,6 +56,9 @@ Attempts to leave a channel; reason argument is optional.
 
 Attempts to kick a user from a channel; reason argument is optional.
 
+```js
+  client.emit("kick", "#example", "zipp", "Stop derailing chat with links to pictures of cats");
+```
 ### "invite" (user, channel)
 
 Invites a user to the channel.
