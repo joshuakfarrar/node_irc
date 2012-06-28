@@ -18,9 +18,6 @@ function zIRCClient(stream, options) {
 
   var self = this;
 
-  /*
-    Connection events
-  */
   this.stream.on("connect", function() {
     self.on_connect();
   });
