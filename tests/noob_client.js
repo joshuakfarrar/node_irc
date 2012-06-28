@@ -102,7 +102,7 @@ zirc_client.on("ready", function() {
 });
 
 zirc_client.on("PING", function() {
-  zirc_client.emit("PONG", os.hostname());
+  zirc_client.pong(os.hostname());
 });
 
 zirc_client.on("error", function(err) {

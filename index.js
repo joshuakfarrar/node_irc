@@ -16,31 +16,7 @@ function zIRCClient(stream, options) {
   this.send_anyway = false;
   this.commands_sent = 0;
 
-  /*
-    Client-generated event handling
-    The driver accepts these events from the client
-    - join
-    - leave
-    - kick
-    - invite
-    - topic
-    - mode
-    - say
-    - msg
-    - notice
-    - away
-    - back
-    - whois
-    - register
-    - setNick
-    - quit
-  */
-
   var self = this;
-
-  this.on("PONG", function (hostname) {
-    this.send_command("PONG %s", [ hostname ]);
-  });
 
   /*
     Connection events
@@ -128,6 +104,14 @@ zIRCClient.prototype.handle_command = function (message) {
 
   return true;
 }
+
+zIRCClient.prototype.pong = function (hostname) {
+  var command = "PONG";
+  if (typeof hostname === 'string') {
+    command = command + " " + hostname;
+  }
+  this.send_command(command);
+};
 
 zIRCClient.prototype.join = function (channel, key) {
   if (CHANNEL_PREFIXES.indexOf(channel.charAt(0)) == -1) {
