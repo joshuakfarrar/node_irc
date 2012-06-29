@@ -87,6 +87,7 @@ zIRCClient.prototype.handle_command = function (message) {
   /*
     Server->Driver command handling
     What to do when you get a command of case 'x' from the server
+    Based on numerics
   */
   switch (message.command) {
     case "PING":

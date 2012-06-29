@@ -10,23 +10,6 @@ zirc_client.on("connect", function () {
   console.log('Connected to ' + zirc_client.host + ":" + zirc_client.port);
 });
 
-// Client needs to emit..
-// join
-// leave
-// kick
-// invite
-// topic
-// mode
-// say
-// msg
-// notice
-// away
-// back
-// whois
-// register
-// setNick
-// quit
-
 zirc_client.on("ready", function() {
   console.log('READY!');
   process.stdin.resume();
@@ -61,7 +44,7 @@ zirc_client.on("ready", function() {
         case "msg":
           var args = text.substring(text.indexOf(" ") + 1);
           args = args.split(" ");
-          zirc_client.msg(args.shift(), util.format(args.toString()));
+          zirc_client.msg(args.shift(), util.format(args.join(" ")));
         break;
         case "notice":
           var args = text.substring(text.indexOf(" ") + 1);
@@ -115,5 +98,8 @@ zirc_client.on("PRIVMSG", function(msg) {
 });
 
 zirc_client.on("message", function(msg) {
-  console.log(msg);
+  if (msg.command == 001) {
+    console.log(msg);
+  }
+  console.log(msg.args[msg.args.length - 1]);
 });
